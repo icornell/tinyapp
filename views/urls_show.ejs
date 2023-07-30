@@ -20,14 +20,15 @@
         <p class="card-text">
           Short URL ID: <a href="/u/<%= id %>"><%= id %></a>
         </p>
-        <h5>Want to create a new TinyURL? Click <a href= '#'>here!</a></h5> <!--REMINDER: currently dead link-->
+        <h5>Want to create a new TinyURL? Click <a href="#">here!</a></h5>
+        <!--REMINDER: currently dead link-->
       </div>
       <div class="card-footer text-muted">
         <h3>Edit</h3>
         <form action="/urls/" method="POST">
-        <label for="newURL">New URL:</label>
-        <input type="text" name="newURL" id="newURL"placeholder="http://">
-        <button type="submit" class="btn btn-primary">Edit</button>
+          <label for="newURL">New URL:</label>
+          <input type="text" name="newURL" id="newURL" placeholder="http://" />
+          <button type="submit" class="btn btn-primary">Edit</button>
         </form>
       </div>
     </div>

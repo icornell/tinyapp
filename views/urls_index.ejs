@@ -18,7 +18,7 @@
   </head>
   <body>
     <%- include('partials/_header') %>
-    <main style="margin: 1em;">
+    <main style="margin: 1em">
       <h3>My URLs</h3>
       <table class="table">
         <thead>
@@ -31,22 +31,25 @@
         </thead>
         <tbody>
           <% for (let id in urls) { %>
-            <tr>
-              <td><%= id %></td>
-              <td><%= urls[id] %></td>
-              <td><form method="GET" action="/urls/<%= id %>">
-                  <button type="submit" class = "btn btn-primary">Edit</button>
-                </form>
-              </td>
-              <td><form method="POST" action="/urls/<%= id %>/delete">
-                <button type="submit" class = "btn btn-danger">Delete</button>
+          <tr>
+            <td><%= id %></td>
+            <td><%= urls[id] %></td>
+            <td>
+              <form method="GET" action="/urls/<%= id %>">
+                <button type="submit" class="btn btn-primary">Edit</button>
               </form>
             </td>
-            </tr>
+            <td>
+              <form method="POST" action="/urls/<%= id %>/delete">
+                <button type="submit" class="btn btn-danger">Delete</button>
+              </form>
+            </td>
+          </tr>
           <% } %>
         </tbody>
       </table>
-      <h5>Want to create a new TinyURL? Click <a href= '#'>here!</a></h5> <!--REMINDER: currently dead link-->
+      <h5>Want to create a new TinyURL? Click <a href="#">here!</a></h5>
+      <!--REMINDER: currently dead link-->
     </main>
     <!-- Bootstrap JS -->
     <script
