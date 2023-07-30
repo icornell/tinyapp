@@ -45,12 +45,18 @@ app.get("/urls/:id", (req, res) => {
   res.render("urls_show", templateVars);
 });
 
-app.listen(PORT, () => {
-  console.log(`Example app listening on port ${PORT}!`);
+app.get("/u/:id", (req, res) => {
+  const longURL = urlDatabase[req.params.id];//get the longURL from urlDatabase
+  console.log(longURL);//see the longURL
+  res.redirect(longURL);
 });
 
 app.post("/urls", (req, res) => {
   const shortURL = generateRandomString();//generate a random string variable of 6 characters
   urlDatabase[generateRandomString()] = req.body.longURL;//save the longURL into urlDatabase 
+  console.log(urlDatabase);//see the new urlDatabase
   res.redirect(`/urls/${shortURL}`);//redirect to /urls/:shortURL
+});
+app.listen(PORT, () => {
+  console.log(`Example app listening on port ${PORT}!`);
 });
