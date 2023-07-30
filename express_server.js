@@ -50,6 +50,7 @@ app.listen(PORT, () => {
 });
 
 app.post("/urls", (req, res) => {
-  console.log(req.body); // Log the POST request body to the console
-  res.send("Ok"); // Respond with 'Ok' (we will replace this)
+  const shortURL = generateRandomString();//generate a random string variable of 6 characters
+  urlDatabase[generateRandomString()] = req.body.longURL;//save the longURL into urlDatabase 
+  res.redirect(`/urls/${shortURL}`);//redirect to /urls/:shortURL
 });
