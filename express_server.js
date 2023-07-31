@@ -1,11 +1,11 @@
 const express = require("express");
 const app = express();
 const PORT = 8080; // default port 8080
-const cookieParser = require("cookie-parser");//require cookie-parser
+const cookieParser = require("cookie-parser"); //require cookie-parser
 
 app.set("view engine", "ejs"); // set the view engine to ejs
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());//use cookie-parser as per the documentation
+app.use(cookieParser()); //use cookie-parser as per the documentation
 
 function generateRandomString() {
   let randomString = "";
@@ -37,9 +37,9 @@ app.get("/hello", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  const templateVars = { 
-    urls: urlDatabase,//pass urlDatabase to templateVars
-    username: req.cookies["username"],//pass username to templateVars
+  const templateVars = {
+    urls: urlDatabase, //pass urlDatabase to templateVars
+    username: req.cookies["username"], //pass username to templateVars
   };
   res.render("urls_index", templateVars); // pass templateVars to urls_index.ejs
 });
@@ -64,6 +64,15 @@ app.get("/u/:id", (req, res) => {
   const longURL = urlDatabase[req.params.id]; //get the longURL from urlDatabase
   console.log(longURL); //see the longURL
   res.redirect(longURL);
+});
+
+app.get("/register", (req, res) => {
+  const templateVars = {
+    username: req.cookies["username"],
+    email: req.body.email,
+    password: req.body.password,
+    };
+    res.render("urls_register", templateVars);
 });
 
 app.post("/urls", (req, res) => {
