@@ -1,13 +1,13 @@
 const express = require("express");
 const app = express();
 const PORT = 8080; // default port 8080
-const cookieParser = require("cookie-parser"); //require cookie-parser
+const cookieParser = require("cookie-parser");//require cookie-parser
 
 app.set("view engine", "ejs"); // set the view engine to ejs
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser()); //use cookie-parser as per the documentation
 
-function generateRandomString() {
+function generateRandomString() {//use for shortURL and userID
   let randomString = "";
   const possible =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -22,6 +22,19 @@ function generateRandomString() {
 const urlDatabase = {
   b2xVn2: "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com",
+};
+
+const users = {
+  userRandomID: {
+    id: "userRandomID",
+    email: "user@email.com",
+    password: "secure-password",
+  },
+  user2RandomID: {
+    id: "user2RandomID",
+    email: "user2@email.com",
+    password: "secure-password2",
+  }
 };
 
 app.get("/", (req, res) => {
@@ -105,6 +118,19 @@ app.post("/login", (req, res) => {
 app.post("/logout", (req, res) => {
   //clear the username cookie
   res.clearCookie("username"); //clear the username cookie
+  res.redirect("/urls"); //redirect to /urls
+});
+
+app.post("/register", (req, res) => {
+  //set the username cookie
+  const userID = generateRandomString(); //generate a random string variable of 6 characters
+  users[userID] = {
+    id: userID,
+    email: req.body.email,
+    password: req.body.password,
+  }; //save the new user into users
+  console.log(users); //see the new users
+  res.cookie("user_id", userID); //set the user_id cookie
   res.redirect("/urls"); //redirect to /urls
 });
 
