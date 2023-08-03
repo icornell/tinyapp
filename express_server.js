@@ -1,13 +1,14 @@
 const express = require("express");
 const app = express();
 const PORT = 8080; // default port 8080
-const cookieParser = require("cookie-parser");//require cookie-parser
+const cookieParser = require("cookie-parser"); //require cookie-parser
 
 app.set("view engine", "ejs"); // set the view engine to ejs
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser()); //use cookie-parser as per the documentation
 
-function generateRandomString() {//use for shortURL and userID
+function generateRandomString() {
+  //use for shortURL and userID
   let randomString = "";
   const possible =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -18,6 +19,16 @@ function generateRandomString() {//use for shortURL and userID
   }
   return randomString;
 }
+
+const getUserByEmail = (email) => {
+  ///DRY code to find a user by email
+  for (const user in users) {
+    if (users[user].email === email) {
+      return users[user];
+    }
+  }
+  return false;
+};
 
 const urlDatabase = {
   b2xVn2: "http://www.lighthouselabs.ca",
@@ -34,7 +45,7 @@ const users = {
     id: "user2RandomID",
     email: "user2@email.com",
     password: "secure-password2",
-  }
+  },
 };
 
 app.get("/", (req, res) => {
@@ -84,8 +95,8 @@ app.get("/register", (req, res) => {
     user: users[req.cookies["user_id"]],
     email: req.body.email,
     password: req.body.password,
-    };
-    res.render("urls_register", templateVars);
+  };
+  res.render("urls_register", templateVars);
 });
 
 app.post("/urls", (req, res) => {
@@ -122,14 +133,23 @@ app.post("/logout", (req, res) => {
 });
 
 app.post("/register", (req, res) => {
-  //set the username cookie
+  const registeredEmail = req.body.email; //get the email from req.body
+  const registeredPassword = req.body.password; //get the password from req.body
+
   const userID = generateRandomString(); //generate a random string variable of 6 characters
   users[userID] = {
     id: userID,
-    email: req.body.email,
-    password: req.body.password,
+    email: registeredEmail,
+    password: registeredPassword,
   }; //save the new user into users
   console.log(users); //see the new users
+
+  if (registeredEmail === "" || registeredPassword === "") {//return error if email or password are empty strings
+    res.status(400).send("Please enter a valid email or password");
+  }
+  if(getUserByEmailUserByEmail(registeredEmail)) {//return error if email already exists
+    res.status(400).send("Email already exists");
+  };
   res.cookie("user_id", userID); //set the user_id cookie
   res.redirect("/urls"); //redirect to /urls
 });
