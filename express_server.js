@@ -136,19 +136,18 @@ app.post("/register", (req, res) => {
   const registeredEmail = req.body.email; //get the email from req.body
   const registeredPassword = req.body.password; //get the password from req.body
 
-  const userID = generateRandomString(); //generate a random string variable of 6 characters
-  users[userID] = {
-    id: userID,
-    email: registeredEmail,
-    password: registeredPassword,
-  }; //save the new user into users
-  console.log(users); //see the new users
-
   if (registeredEmail === "" || registeredPassword === "") {//return error if email or password are empty strings
     res.status(400).send("Please enter a valid email or password");
-  }
-  if(getUserByEmailUserByEmail(registeredEmail)) {//return error if email already exists
+  } else if(getUserByEmailUserByEmail(registeredEmail)) {//return error if email already exists
     res.status(400).send("Email already exists");
+  } else {
+    const userID = generateRandomString(); //generate a random string variable of 6 characters
+    users[userID] = {
+      id: userID,
+      email: registeredEmail,
+      password: registeredPassword,
+    };
+    console.log(users); //see the new users
   };
   res.cookie("user_id", userID); //set the user_id cookie
   res.redirect("/urls"); //redirect to /urls
