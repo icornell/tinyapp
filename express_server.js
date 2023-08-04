@@ -99,6 +99,15 @@ app.get("/register", (req, res) => {
   res.render("urls_register", templateVars);
 });
 
+app.get("/login", (req, res) => {
+  const templateVars = {
+    user: users[req.cookies["user_id"]],
+    email: req.body.email,
+    password: req.body.password,
+  };
+  res.render("urls_login", templateVars);
+});
+
 app.post("/urls", (req, res) => {
   const shortURL = generateRandomString(); //generate a random string variable of 6 characters
   urlDatabase[generateRandomString()] = req.body.longURL; //save the longURL into urlDatabase
@@ -138,7 +147,7 @@ app.post("/register", (req, res) => {
 
   if (registeredEmail === "" || registeredPassword === "") {//return error if email or password are empty strings
     res.status(400).send("Please enter a valid email or password");
-  } else if(getUserByEmailUserByEmail(registeredEmail)) {//return error if email already exists
+  } else if(getUserByEmail(registeredEmail)) {//return error if email already exists
     res.status(400).send("Email already exists");
   } else {
     const userID = generateRandomString(); //generate a random string variable of 6 characters
@@ -147,6 +156,7 @@ app.post("/register", (req, res) => {
       email: registeredEmail,
       password: registeredPassword,
     };
+    return users; //save the new user into users
     console.log(users); //see the new users
   };
   res.cookie("user_id", userID); //set the user_id cookie
