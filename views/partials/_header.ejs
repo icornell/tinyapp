@@ -19,18 +19,18 @@
         <a class="nav-item nav-link" href="/register">Join TinyApp</a>
       </div>
     </div>
-    <% if (user) { %> 
-    <form method="POST" action="/logout" class="form-inline">
-      <span class="navbar-text mr-3">
-        Logged in as <%= user.email %>
-      </span>
-      <button type="submit" class="btn btn-primary">Logout</button>
-    </form>
-    <% } else { %>
+    <% if (!user) { %> 
       <div class="navbar-nav">
         <a class="nav-item nav-link" href="/login" style="margin: 1em">Login</a>
         <a class="nav-item nav-link" href="/register" style="margin: 1em">Register</a>
       </div>
+      <% } else { %>
+      <form method="POST" action="/logout" class="form-inline">
+      <div class="form-group form-inline">
+        <label>Logged in as <%= user.email %></label>
+      <button type="submit" class="btn btn-primary">Logout</button>
+      </div>
+    </form>
     <% } %>
   </nav>
 </header>
