@@ -96,7 +96,11 @@ app.get("/register", (req, res) => {
     email: req.body.email,
     password: req.body.password,
   };
-  res.render("urls_register", templateVars);
+  if (templateVars.user) {
+    res.redirect("/urls");
+  } else {
+    res.render("urls_register", templateVars);
+  }
 });
 
 app.get("/login", (req, res) => {
@@ -105,7 +109,11 @@ app.get("/login", (req, res) => {
     email: req.body.email,
     password: req.body.password,
   };
-  res.render("urls_login", templateVars);
+  if (templateVars.user) {
+    res.redirect("/urls");
+  } else {
+    res.render("urls_login", templateVars);
+  }
 });
 
 app.post("/urls", (req, res) => {
@@ -153,9 +161,11 @@ app.post("/register", (req, res) => {
   const registeredEmail = req.body.email; //get the email from req.body
   const registeredPassword = req.body.password; //get the password from req.body
 
-  if (registeredEmail === "" || registeredPassword === "") {//return error if email or password are empty strings
+  if (registeredEmail === "" || registeredPassword === "") {
+    //return error if email or password are empty strings
     res.status(400).send("Please enter a valid email or password");
-  } else if(getUserByEmail(registeredEmail)) {//return error if email already exists
+  } else if (getUserByEmail(registeredEmail)) {
+    //return error if email already exists
     res.status(400).send("Email already exists");
   } else {
     const userID = generateRandomString(); //generate a random string variable of 6 characters
@@ -166,7 +176,7 @@ app.post("/register", (req, res) => {
     };
     return users; //save the new user into users
     console.log(users); //see the new users
-  };
+  }
   res.cookie("user_id", userID); //set the user_id cookie
   res.redirect("/urls"); //redirect to /urls
 });
