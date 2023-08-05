@@ -130,9 +130,18 @@ app.post("/urls/:id", (req, res) => {
 
 app.post("/login", (req, res) => {
   //set the username cookie
-  const user_id = req.body.user_id; //get the username from req.body
-  res.cookie("user_id", user_id); //set the username cookie
-  res.redirect("/urls"); //redirect to /urls
+  const email = req.body.email;
+  const password = req.body.password;
+
+  if (!getUserByEmail(email)) {
+    res.status(403).send("Email not found");
+  } else if (getUserByEmail(email).password !== password) {
+    res.status(403).send("Password incorrect");
+  } else {
+    const user_id = getUserByEmail(email).id;
+    res.cookie("user_id", user_id); //set the username cookie
+    res.redirect("/urls"); //redirect to /urls
+  }
 });
 
 app.post("/logout", (req, res) => {
