@@ -72,7 +72,11 @@ app.get("/urls/new", (req, res) => {
   const templateVars = {
     user: users[req.cookies["user_id"]],
   };
+  if (!templateVars.user) {//only logged in users can create new URLs
+    res.redirect("/login");
+  } else {
   res.render("urls_new", templateVars);
+  }
 });
 
 app.get("/urls/:id", (req, res) => {
@@ -120,6 +124,9 @@ app.post("/urls", (req, res) => {
   const shortURL = generateRandomString(); //generate a random string variable of 6 characters
   urlDatabase[generateRandomString()] = req.body.longURL; //save the longURL into urlDatabase
   console.log(urlDatabase); //see the new urlDatabase
+  if (!req.cookies["user_id"]) {
+    res.send("Please login to create a new URL");
+  }; //only logged in users can create new URLs
   res.redirect(`/urls/${shortURL}`); //redirect to /urls/:shortURL
 });
 
