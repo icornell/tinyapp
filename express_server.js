@@ -1,13 +1,17 @@
 const express = require("express");
 const app = express();
-const PORT = 8080; // default port 8080
+const PORT = 8080;
 const cookieSession = require("cookie-session"); //require cookie-session middleware
-const bcrypt = require("bcryptjs"); //require bcrypt
-const helpers = require("./helpers"); //require helpers.js
+const bcrypt = require("bcryptjs"); //require bcrypt for encryption and decryption of passwords
+const helpers = require("./helpers"); //require helpers.js file for modular code
+
+const urlDatabase = {};
+const users = {};
 
 app.set("view engine", "ejs"); // set the view engine to ejs
+
 app.use(express.urlencoded({ extended: true }));
-//app.use(cookieParser()); //use cookie-parser as per the documentation
+
 app.use(
   cookieSession({
     name: "session",
@@ -30,7 +34,7 @@ function generateRandomString() {
 }
 
 const urlsForUser = (id) => {
-  //DRY code to find a user by id
+  //DRY code to find a user by their id
   const userURLs = {};
   for (const shortURL in urlDatabase) {
     if (urlDatabase[shortURL].userID === id) {
@@ -40,31 +44,42 @@ const urlsForUser = (id) => {
   return userURLs;
 };
 
-const urlDatabase = {};
-
-const users = {};
-
 app.get("/", (req, res) => {
-  res.send("Hello!");
+  if (!req.session.user_id) {
+    res.redirect("/login");
+  } else {
+    res.send("Hello! Please login or register to use TinyApp");
+  }
 });
 
 app.get("/urls.json", (req, res) => {
-  res.json(urlDatabase);
+  if (!req.session.user_id) {
+    res.redirect("/login");
+  } else {
+    res.json(urlsForUser(req.session.user_id)); //pass the user's urlDatabase to urls.json
+  }
 });
 
 app.get("/hello", (req, res) => {
-  res.send("<html><body>Hello <b>World</b></body></html>\n");
+  if (!req.session.user_id) {
+    res.redirect("/login");
+  } else {
+    res.send(
+      "Hello TinyApp User, I am TinyApp! I hope that you enjoy using me!"
+    );
+  }
 });
 
 app.get("/urls", (req, res) => {
   const templateVars = {
     urls: urlsForUser(req.session.user_id), //pass user's urlDatabase to templateVars
-    user: users[req.session.user_id], //pass username to templateVars
+    user: users[req.session.user_id], //pass user id to templateVars
   };
   res.render("urls_index", templateVars); // pass templateVars to urls_index.ejs
 });
 
 app.get("/urls/new", (req, res) => {
+  //create a new URL
   const templateVars = {
     user: users[req.session.user_id],
   };
@@ -130,7 +145,6 @@ app.get("/login", (req, res) => {
 app.post("/urls", (req, res) => {
   const shortURL = generateRandomString(); //generate a random string variable of 6 characters
   urlDatabase[generateRandomString()] = req.body.longURL; //save the longURL into urlDatabase
-  console.log(urlDatabase); //see the new urlDatabase
   if (!req.session.user_id) {
     res.send("Please login to create a new URL");
   } //only logged in users can create new URLs
@@ -159,13 +173,12 @@ app.post("/urls/:id", (req, res) => {
   else {
     const shortURL = req.params.id; //get the shortURL from urlDatabase
     urlDatabase[shortURL] = req.body.newURL; //save the newURL into urlDatabase
-    console.log(urlDatabase); //see the new urlDatabase
-    res.redirect("/urls"); //redirect to /urls
+    res.redirect("/urls");
   }
 });
 
 app.post("/login", (req, res) => {
-  //set the username cookie
+  //set the username cookie session
   const email = req.body.email;
   const password = req.body.password;
 
@@ -180,8 +193,8 @@ app.post("/login", (req, res) => {
     res.status(400).send("Password does not match the provided email");
   } else {
     const user_id = helpers.getUserByEmail(email).id;
-    req.session.user_id = userID; //set the username cookie
-    res.redirect("/urls"); //redirect to /urls
+    req.session.user_id = userID; //set the username cookie session
+    res.redirect("/urls");
   }
 });
 
@@ -202,14 +215,14 @@ app.post("/register", (req, res) => {
       email: registeredEmail,
       password: bcrypt.hashSync(registeredPassword, 10),
     };
-    req.session.user_id = userID; //set the user_id cookie
-    res.redirect("/urls"); //redirect to /urls
+    req.session.user_id = userID;
+    res.redirect("/urls");
   }
 });
 
 app.post("/logout", (req, res) => {
   req.session = null; //clear the username cookie
-  res.redirect("/login"); //redirect to /login
+  res.redirect("/login");
 });
 
 app.listen(PORT, () => {
