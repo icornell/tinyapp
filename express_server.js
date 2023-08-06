@@ -31,8 +31,15 @@ const getUserByEmail = (email) => {
 };
 
 const urlDatabase = {
-  b2xVn2: "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com",
+  //urlDatabase object with shortURL as key and longURL as value and userID as the user that created the URL
+  b2xVn2: { 
+    longURL: "http://www.lighthouselabs.ca", 
+    userID: "userRandomID" 
+  },
+  ism5xK: {
+    longURL: "http://www.google.com",
+    userID: "userRandomID",
+  },
 };
 
 const users = {
@@ -72,29 +79,31 @@ app.get("/urls/new", (req, res) => {
   const templateVars = {
     user: users[req.cookies["user_id"]],
   };
-  if (!templateVars.user) {//only logged in users can create new URLs
+  if (!templateVars.user) {
+    //only logged in users can create new URLs
     res.redirect("/login");
   } else {
-  res.render("urls_new", templateVars);
+    res.render("urls_new", templateVars);
   }
 });
 
 app.get("/urls/:id", (req, res) => {
   const templateVars = {
     id: req.params.id,
-    longURL: urlDatabase[req.params.id],
+    longURL: urlDatabase[req.params.id].longURL,
     user: users[req.cookies["user_id"]],
   };
   res.render("urls_show", templateVars);
 });
 
 app.get("/u/:id", (req, res) => {
-  const longURL = urlDatabase[req.params.id]; //get the longURL from urlDatabase
+  const longURL = urlDatabase[req.params.id].longURL; //get the longURL from urlDatabase
   console.log(longURL); //see the longURL
   if (!longURL) {
     res.status(404).send("URL not found, please check your URL and try again");
-  } else {//if the longURL does not exist in urlDatabase, send 404 error
-  res.redirect(longURL);
+  } else {
+    //if the longURL does not exist in urlDatabase, send 404 error
+    res.redirect(longURL);
   }
 });
 
@@ -130,12 +139,12 @@ app.post("/urls", (req, res) => {
   console.log(urlDatabase); //see the new urlDatabase
   if (!req.cookies["user_id"]) {
     res.send("Please login to create a new URL");
-  }; //only logged in users can create new URLs
+  } //only logged in users can create new URLs
   res.redirect(`/urls/${shortURL}`); //redirect to /urls/:shortURL
 });
 
 app.post("/urls/:id/delete", (req, res) => {
-  delete urlDatabase[req.params.id]; //delete the longURL from urlDatabase
+  delete urlDatabase[req.params.id].longURL; //delete the longURL from urlDatabase
   console.log(urlDatabase); //see the new urlDatabase
   res.redirect("/urls"); //redirect to /urls
 });
