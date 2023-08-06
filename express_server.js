@@ -91,7 +91,11 @@ app.get("/urls/:id", (req, res) => {
 app.get("/u/:id", (req, res) => {
   const longURL = urlDatabase[req.params.id]; //get the longURL from urlDatabase
   console.log(longURL); //see the longURL
+  if (!longURL) {
+    res.status(404).send("URL not found, please check your URL and try again");
+  } else {//if the longURL does not exist in urlDatabase, send 404 error
   res.redirect(longURL);
+  }
 });
 
 app.get("/register", (req, res) => {
@@ -100,10 +104,10 @@ app.get("/register", (req, res) => {
     email: req.body.email,
     password: req.body.password,
   };
-  if (templateVars.user) {
-    res.redirect("/urls");
-  } else {
+  if (!templateVars.user) {
     res.render("urls_register", templateVars);
+  } else {
+    res.redirect("/urls");
   }
 });
 
@@ -181,11 +185,9 @@ app.post("/register", (req, res) => {
       email: registeredEmail,
       password: registeredPassword,
     };
-    return users; //save the new user into users
-    console.log(users); //see the new users
+    res.cookie("user_id", userID); //set the user_id cookie
+    res.redirect("/urls"); //redirect to /urls
   }
-  res.cookie("user_id", userID); //set the user_id cookie
-  res.redirect("/urls"); //redirect to /urls
 });
 
 app.listen(PORT, () => {
