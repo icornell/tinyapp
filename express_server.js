@@ -27,7 +27,7 @@ function generateRandomString() {
     );
   }
   return randomString;
-};
+}
 
 const urlsForUser = (id) => {
   //DRY code to find a user by id
@@ -41,31 +41,8 @@ const urlsForUser = (id) => {
 };
 
 const urlDatabase = {};
-/* 
-  urlDatabase object with shortURL as key and longURL as value and userID as the user that created the URL
-  'b2xVn2' : { 
-    longURL: "http://www.lighthouselabs.ca", 
-    userID: "userRandomID" 
-  },
-  '9sm5xK' : {
-    longURL: "http://www.google.com",
-    userID: "userRandomID",
-  },
-  */
 
 const users = {};
-/*
-  userRandomID: {
-    id: "userRandomID",
-    email: "user@email.com",
-    password: "secure-password",
-  },
-  user2RandomID: {
-    id: "user2RandomID",
-    email: "user2@email.com",
-    password: "secure-password2",
-  },
-  */
 
 app.get("/", (req, res) => {
   res.send("Hello!");
@@ -208,11 +185,10 @@ app.post("/login", (req, res) => {
   }
 });
 
-
 app.post("/register", (req, res) => {
   const registeredEmail = req.body.email; //get the email from req.body
   const registeredPassword = req.body.password; //get the password from req.body
-  
+
   if (registeredEmail === "" || registeredPassword === "") {
     //return error if email or password are empty strings
     res.status(400).send("Please enter a valid email or password");
@@ -226,7 +202,7 @@ app.post("/register", (req, res) => {
       email: registeredEmail,
       password: bcrypt.hashSync(registeredPassword, 10),
     };
-    req.session.user_id = userID;//set the user_id cookie
+    req.session.user_id = userID; //set the user_id cookie
     res.redirect("/urls"); //redirect to /urls
   }
 });
