@@ -30,13 +30,25 @@ const getUserByEmail = (email) => {
   return false;
 };
 
+const urlsForUser = (id) => {
+  //DRY code to find a user by id
+  const userURLs = {};
+  for (const shortURL in urlDatabase) {
+    if (urlDatabase[shortURL].userID === id) {
+      userURLs[shortURL] = urlDatabase[shortURL];
+    }
+  }
+  return userURLs;
+};
+
+
 const urlDatabase = {
   //urlDatabase object with shortURL as key and longURL as value and userID as the user that created the URL
-  b2xVn2: { 
+  'b2xVn2' : { 
     longURL: "http://www.lighthouselabs.ca", 
     userID: "userRandomID" 
   },
-  ism5xK: {
+  '9sm5xK' : {
     longURL: "http://www.google.com",
     userID: "userRandomID",
   },
@@ -69,7 +81,7 @@ app.get("/hello", (req, res) => {
 
 app.get("/urls", (req, res) => {
   const templateVars = {
-    urls: urlDatabase, //pass urlDatabase to templateVars
+    urls: urlsForUser(req.cookies["user_id"]), //pass user's urlDatabase to templateVars
     user: users[req.cookies["user_id"]], //pass username to templateVars
   };
   res.render("urls_index", templateVars); // pass templateVars to urls_index.ejs
@@ -88,12 +100,20 @@ app.get("/urls/new", (req, res) => {
 });
 
 app.get("/urls/:id", (req, res) => {
-  const templateVars = {
-    id: req.params.id,
-    longURL: urlDatabase[req.params.id].longURL,
-    user: users[req.cookies["user_id"]],
-  };
+  const shortURL = req.params.id;
+  const longURL = urlDatabase[shortURL]?.longURL;
+  const userID = users[req.cookies["user_id"]];
+  const userURLs = urlsForUser(req.cookies["user_id"]);
+  const templateVars = { //pass the following variables to urls_show.ejs
+    shortURL, user: users[userID], userURLs, longURL, urlDatabase
+  };  
+if (!urlDatabase[shortURL]) {
+    res.status(401).send("Please login to view this page");
+  } else if (!userURLs[shortURL] || !userID) {
+    res.status(403).send("You do not have access to this page");
+  } else {
   res.render("urls_show", templateVars);
+  }
 });
 
 app.get("/u/:id", (req, res) => {
@@ -144,16 +164,30 @@ app.post("/urls", (req, res) => {
 });
 
 app.post("/urls/:id/delete", (req, res) => {
+  const userID = users[req.cookies["user_id"]];
+  const userURLs = urlsForUser(userID);
+  if (!userURLs[req.params.id] || !userID) {
+    res.status(403).send("You do not have access to this page");
+  } //only logged in users can delete their own URLs
+  else {
   delete urlDatabase[req.params.id].longURL; //delete the longURL from urlDatabase
   console.log(urlDatabase); //see the new urlDatabase
   res.redirect("/urls"); //redirect to /urls
+  }
 });
 
 app.post("/urls/:id", (req, res) => {
+  const userID = users[req.cookies["user_id"]];
+  const userURLs = urlsForUser(userID);
+  if (!userURLs[req.params.id] || !userID) {
+    res.status(403).send("You do not have access to this page");
+  } //only logged in users can edit their own URLs
+  else {
   const shortURL = req.params.id; //get the shortURL from urlDatabase
   urlDatabase[shortURL] = req.body.newURL; //save the newURL into urlDatabase
   console.log(urlDatabase); //see the new urlDatabase
   res.redirect("/urls"); //redirect to /urls
+  }
 });
 
 app.post("/login", (req, res) => {

@@ -30,6 +30,11 @@
           </tr>
         </thead>
         <tbody>
+          <% if (!user) { %> 
+          <div class "alert alert-warning" role="alert">
+            Please <a href="/login">login</a> or <a href="/register">register</a> to view your URLs.
+          </div>
+        <% } else { %>
           <% for (let id in urls) { %>
           <tr>
             <td><%= id %></td>
@@ -46,10 +51,9 @@
             </td>
           </tr>
           <% } %>
+        <% } %>
         </tbody>
       </table>
-      <h5>Want to create a new TinyURL? Click <a href="#">here!</a></h5>
-      <!--REMINDER: currently dead link-->
     </main>
     <!-- Bootstrap JS -->
     <script
