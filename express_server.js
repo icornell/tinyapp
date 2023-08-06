@@ -3,6 +3,7 @@ const app = express();
 const PORT = 8080; // default port 8080
 const cookieSession = require("cookie-session"); //require cookie-session middleware
 const bcrypt = require("bcryptjs"); //require bcrypt
+const helpers = require("./helpers"); //require helpers.js
 
 app.set("view engine", "ejs"); // set the view engine to ejs
 app.use(express.urlencoded({ extended: true }));
@@ -26,16 +27,6 @@ function generateRandomString() {
     );
   }
   return randomString;
-}
-
-const getUserByEmail = (email) => {
-  ///DRY code to find a user by email
-  for (const user in users) {
-    if (users[user].email === email) {
-      return users[user];
-    }
-  }
-  return false;
 };
 
 const urlsForUser = (id) => {
@@ -201,9 +192,9 @@ app.post("/login", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
 
-  if (!getUserByEmail(email)) {
-    res.status(403).send("Email not found");
-  } else if (getUserByEmail(email).password !== password) {
+  if (!helpers.getUserByEmail(email, users)) {
+    res.status(403).send("You do not have an account with this email yet");
+  } else if (helpers.getUserByEmail(email, users).password !== password) {
     res.status(403).send("Password incorrect");
   } else if (
     !bcrypt.compareSync(registeredPassword, users[registeredEmail].password)
@@ -211,7 +202,7 @@ app.post("/login", (req, res) => {
     //return error if password does not match
     res.status(400).send("Password does not match the provided email");
   } else {
-    const user_id = getUserByEmail(email).id;
+    const user_id = helpers.getUserByEmail(email).id;
     req.session.user_id = userID; //set the username cookie
     res.redirect("/urls"); //redirect to /urls
   }
@@ -225,7 +216,7 @@ app.post("/register", (req, res) => {
   if (registeredEmail === "" || registeredPassword === "") {
     //return error if email or password are empty strings
     res.status(400).send("Please enter a valid email or password");
-  } else if (getUserByEmail(registeredEmail)) {
+  } else if (helpers.getUserByEmail(registeredEmail, users)) {
     //return error if email already exists
     res.status(400).send("Email already exists");
   } else {
