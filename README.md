@@ -6,8 +6,11 @@ It was built as an assignment for the Web Flex Bootcamp from Lighthouse Labs in 
 ## Final Product
 
 !["Main Page before login"](https://github.com/icornell/tinyapp/blob/main/docs/tinyApp_urls.png)
+*Main page before logging in*
 !["Registration Page"](https://github.com/icornell/tinyapp/blob/main/docs/tinyApp_register.png)
+*Registration Page*
 !["Login Page"](https://github.com/icornell/tinyapp/blob/main/docs/tinyApp_login.png)
+*Login Page*
 
 ## Dependencies
 
