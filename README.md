@@ -11,6 +11,8 @@ It was built as an assignment for the Web Flex Bootcamp from Lighthouse Labs in 
 *Registration Page*
 !["Login Page"](https://github.com/icornell/tinyapp/blob/main/docs/tinyApp_login.png)
 *Login Page*
+!["URL Page"](https://github.com/icornell/tinyapp/blob/main/docs/tinyApp_examples.png)
+*Examples of Shortened URLs*
 
 ## Dependencies
 
