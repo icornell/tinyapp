@@ -103,33 +103,36 @@ app.post("/urls", (req, res) => {
   if (!req.session.user_id) {
     res.send("Please login to create a new URL");
   } //only logged in users can create new URLs
+  console.log(urlDatabase);
   res.redirect(`/urls/${shortURL}`); //redirect to /urls/:shortURL
 });
 
 app.post("/urls/:id/delete", (req, res) => {
-  const userID = users[req.session.user_id];
-  const userURLs = helpers.urlsForUser(userID);
-  if (!userURLs[req.params.id] || !userID) {
-    res.status(403).send("You do not have access to this page");
-  } //only logged in users can delete their own URLs
-  else {
-    delete urlDatabase[req.params.id].longURL; //delete the longURL from urlDatabase
+  const user = users[req.session.user_id];
+  const shortURL = req.params.id; //get the shortURL from url query
+  if (!user) {
+   return res.status(403).send("You do not have access to this page");
+  }; 
+  if (urlDatabase[shortURL].userID !== user.id) {
+    return res.status(403).send("This URL does not belong to you **<change later>");
+  };
+    delete urlDatabase[shortURL]; //delete the shortURL from urlDatabase
     res.redirect("/urls"); //redirect to /urls
-  }
 });
 
 app.post("/urls/:id", (req, res) => {
-  const userID = users[req.session.user_id];
-  const userURLs = helpers.urlsForUser(userID);
-  if (!userURLs[req.params.id] || !userID) {
-    res.status(403).send("You do not have access to this page");
-  } //only logged in users can edit their own URLs
-  else {
-    const shortURL = req.params.id; //get the shortURL from urlDatabase
-    urlDatabase[shortURL].longURL = req.body.longURL;
+  console.log(req.session.user_id);
+  const user = users[req.session.user_id];
+  const shortURL = req.params.id; //get the shortURL from urlDatabase
+  if (!user) {
+   return res.status(403).send("You do not have access to this page");
+  }; 
+  if (urlDatabase[shortURL].userID !== user.id) {
+    return res.status(403).send("You do not have access to this page");
+  };
+    urlDatabase[shortURL].longURL = req.body.newURL;
      //save the newURL into urlDatabase
     res.redirect("/urls");
-  }
 });
 
 app.post("/login", (req, res) => {

@@ -22,11 +22,11 @@ function generateRandomString() {
   return randomString;
 };
 
-const urlsForUser = (id) => {
+const urlsForUser = (userID) => {
   //DRY code to find a user by their id
   const userURLs = {};
   for (const shortURL in urlDatabase) {
-    if (urlDatabase[shortURL].userID === id) {
+    if (urlDatabase[shortURL].userID === userID) {
       userURLs[shortURL] = urlDatabase[shortURL];
     }
   }
