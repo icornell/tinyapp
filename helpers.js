@@ -30,7 +30,6 @@ const urlsForUser = (userID) => {
       userURLs[shortURL] = urlDatabase[shortURL];
     }
   }
-  console.log(userURLs)
   return userURLs;
 };
 

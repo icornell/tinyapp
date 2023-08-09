@@ -5,7 +5,7 @@ const cookieSession = require("cookie-session"); //require cookie-session middle
 const bcrypt = require("bcryptjs"); //require bcrypt for encryption and decryption of passwords
 const helpers = require("./helpers"); //require helpers.js file for modular code
 const { urlDatabase, users } = require("./database"); //require database.js file for modular code
-console.log(urlDatabase, users);
+
 app.set("view engine", "ejs"); // set the view engine to ejs
 
 app.use(express.urlencoded({ extended: true }));
@@ -103,7 +103,6 @@ app.post("/urls", (req, res) => {
   if (!req.session.user_id) {
     res.send("Please login to create a new URL");
   } //only logged in users can create new URLs
-  console.log(urlDatabase);
   res.redirect(`/urls/${shortURL}`); //redirect to /urls/:shortURL
 });
 
@@ -121,7 +120,6 @@ app.post("/urls/:id/delete", (req, res) => {
 });
 
 app.post("/urls/:id", (req, res) => {
-  console.log(req.session.user_id);
   const user = users[req.session.user_id];
   const shortURL = req.params.id; //get the shortURL from urlDatabase
   if (!user) {
