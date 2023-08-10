@@ -30,7 +30,7 @@
         <h3>Edit</h3>
         <form action="/urls/<%= shortURL %>" method="POST">
           <label for="newURL">New URL:</label>
-          <input type="text" name="newURL" id="newURL" placeholder="http://" />
+          <input type="text" name="newURL" id="newURL" placeholder= <%= longURL %> />
           <button type="submit" class="btn btn-primary">Edit</button>
         </form>
       </div>
