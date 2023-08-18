@@ -29,6 +29,6 @@ It was built as an assignment for the Web Flex Bootcamp from Lighthouse Labs in 
 ## Getting Started
 
 - Install all dependencies (using the `npm install` command).
-- Run the development web server using the `node express_server.js` command.
+- Run the development web server using the `npm run start` command.
 - Register your email and password as a new user in the app
 - Create your own mini database of shortened urls and enjoy! 
