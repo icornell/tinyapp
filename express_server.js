@@ -51,29 +51,43 @@ app.get("/urls/new", (req, res) => {
 app.get("/urls/:id", (req, res) => {
   const url = urlDatabase[req.params.id];
   const loggedInUser = users[req.session.user_id];
-  const templateVars = {
-      shortURL: req.params.id,
-      longURL: url.longURL,
-      user: loggedInUser,
-      urls: helpers.urlsForUser(req.session.user_id),
-    };
-  if(!url) {
+  
+  // Check if the URL exists in the database
+  if (!url) {
     return res.status(404).send("URL not found, please check your URL and try again");
   }
-  if(url.userID !== loggedInUser.id) {//check in the logged-in user is the owner of the URL
-    return res.status(403).send("You do not have permission to access to this page");
+
+  // Check if the user is not logged in
+  if (!loggedInUser) {
+    return res.status(401).send("You must be logged in to access this page");
   }
+
+  // Check if the logged-in user is the owner of the URL
+  if (url.userID !== loggedInUser.id) {
+    return res.status(403).send("You do not have permission to access this page");
+  }
+
+  const templateVars = {
+    shortURL: req.params.id,
+    longURL: url.longURL,
+    user: loggedInUser,
+    urls: helpers.urlsForUser(req.session.user_id),
+  };
+
   res.render("urls_show", templateVars);
 });
 
-app.get("/u/:id", (req, res) => {
+
+app.get("/u/:id", (req, res) => { 
+  const shortURL = req.params.id; //get the shortURL from url query
   const longURL = urlDatabase[req.params.id] ? urlDatabase[req.params.id].longURL : undefined;//checking if the longURL exists in urlDatabase and returning undefined if not
-  const templateVars = {
-    message: "URL not found, please check your URL and try again",
-    status: 404,
-  };
+  
   if (!longURL) {
-    res.render("urls_error", templateVars);
+    const templateVars = {
+      message: "URL not found, please check your URL and try again",
+      status: 404,
+    };
+    return res.status("urls_error", templateVars);
   } else {
     //if the longURL does not exist in urlDatabase, send 404 error
     res.redirect(longURL);
