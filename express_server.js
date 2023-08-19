@@ -77,17 +77,17 @@ app.get("/urls/:id", (req, res) => {
   res.render("urls_show", templateVars);
 });
 
-
 app.get("/u/:id", (req, res) => { 
   const shortURL = req.params.id; //get the shortURL from url query
-  const longURL = urlDatabase[req.params.id] ? urlDatabase[req.params.id].longURL : undefined;//checking if the longURL exists in urlDatabase and returning undefined if not
-  
+  const longURL = urlDatabase[shortURL] ? urlDatabase[shortURL].longURL : undefined;//checking if the longURL exists in urlDatabase and returning undefined if not
+
   if (!longURL) {
     const templateVars = {
+      user: users[req.session.user_id],
       message: "URL not found, please check your URL and try again",
       status: 404,
     };
-    return res.status("urls_error", templateVars);
+    return res.render("urls_error", templateVars);
   } else {
     //if the longURL does not exist in urlDatabase, send 404 error
     res.redirect(longURL);
